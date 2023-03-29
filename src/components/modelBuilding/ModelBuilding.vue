@@ -2,41 +2,25 @@
 import {computed, ref} from "vue";
 import {Cartesian3, Matrix4, Transforms} from "cesium";
 
-const props = defineProps<{
-  Cesium:any,
-}>()
-const appearance = computed(() => {
-  if (props.Cesium) {
-    return new props.Cesium.PerInstanceColorAppearance({
-      flat: true
-    })
-  } else {
-    return null
-  }
-})
-const attributes = computed(() => {
-  if (props.Cesium) {
-    return {
-      color: new props.Cesium.ColorGeometryInstanceAttribute(Math.random(), Math.random(), Math.random())
-    }
-  } else {
-    return null
-  }
-})
-const modelMatrix = ref(Matrix4.multiplyByTranslation(
-    Transforms.eastNorthUpToFixedFrame(Cartesian3.fromDegrees(119.842282, 40.014781)),
-    new Cartesian3(0.0, 0.0, 0),
-    new Matrix4()
-))
+const props = defineProps<{}>()
+const appearance = ref(null as any)
+const attributes = ref(null as any)
+const modelMatrix = ref(null as any)
 
 const init = () => {
-  appearance.value = new props.Cesium.PerInstanceColorAppearance({
+  appearance.value = new Cesium.PerInstanceColorAppearance({
     flat: true
   })
+  attributes.value = new Cesium.ColorGeometryInstanceAttribute(Math.random(), Math.random(), Math.random())
+  modelMatrix.value = Matrix4.multiplyByTranslation(
+      Transforms.eastNorthUpToFixedFrame(Cartesian3.fromDegrees(119.842282, 40.014781)),
+      new Cartesian3(0.0, 0.0, 0),
+      new Matrix4()
+  )
 }
 
 defineExpose({
-  init:init,
+  init: init,
 })
 
 </script>

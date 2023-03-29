@@ -40,11 +40,13 @@ const flyToTigerAndConvertView = () => {
   })
 }
 
+
 // state
 const geometryRef = ref(null as any)
 const appearance = ref(null as any)
 const attributes = ref(null as any)
 const modelMatrix = ref(null as any)
+
 // methods
 const onViewerReady = (readyObj: VcReadyObject) => {
   // 加载的同时将 全局$cesiumRef初始化
@@ -61,19 +63,10 @@ const onViewerReady = (readyObj: VcReadyObject) => {
   attributes.value = {
     color: new Cesium.ColorGeometryInstanceAttribute(Math.random(), Math.random(), Math.random())
   }
-
   modelMatrix.value = Matrix4.multiplyByTranslation(
       Transforms.eastNorthUpToFixedFrame(Cartesian3.fromDegrees(119.842282, 40.014781)),
       new Cartesian3(0.0, 0.0, 0),
       new Matrix4()
-  )
-
-  console.log(
-      Matrix4.multiplyByTranslation(
-          Transforms.eastNorthUpToFixedFrame(Cartesian3.fromDegrees(119.842282, 40.014781)),
-          new Cartesian3(0.0, 0.0, 0),
-          new Matrix4()
-      )
   )
 
   emit('viewerReady', readyObj)
@@ -95,6 +88,16 @@ const projectionTransforms = ref({
   to: "WGS84",
 })
 const topVisible = ref(true)
+
+const onReadyPromise = (tileset:any, viewer:any) =>{
+  console.log(tileset)
+  const cartographic = Cesium.Cartographic.fromCartesian(tileset.boundingSphere.center)
+  const surface = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height)
+  const offset = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, 0)
+  const translation = Cesium.Cartesian3.subtract(offset, surface, new Cesium.Cartesian3())
+  tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation)
+  viewer.zoomTo(tileset)
+}
 
 
 </script>
@@ -123,8 +126,17 @@ const topVisible = ref(true)
               :otherOpts="{ position: 'bottom' }"
           >
           </vc-navigation>
+
+
+          <vc-primitive-tileset
+              ref="primitive"
+              url="tileset.json"
+              @ready-promise="onReadyPromise"
+          >
+          </vc-primitive-tileset>
+
           <!--描边-->
-          <vc-primitive :appearance="appearance" >
+          <vc-primitive :appearance="appearance">
             <vc-geometry-instance :attributes="attributes">
               <vc-geometry-simple-polyline
                   ref="geometryRef"
@@ -135,20 +147,22 @@ const topVisible = ref(true)
             { lng: 119.840481, lat: 40.013706 },
             { lng: 119.840325, lat: 40.014051 },
             { lng: 119.841660, lat: 40.015759 },
-          ]" ,
-              ></vc-geometry-simple-polyline>
+          ]"></vc-geometry-simple-polyline>
             </vc-geometry-instance>
           </vc-primitive>
 
-          <model-building :cesium="Cesium"/>
-
-<!--          <vc-primitive :appearance="appearance">-->
-<!--            <vc-geometry-instance :attributes="attributes" :modelMatrix="modelMatrix" v-for="(fr,index) in 32" :key="fr">-->
-<!--              <vc-geometry-box :dimensions="{x: 50.0, y: 50.0, z: 5.0 * (index+1)}"></vc-geometry-box>-->
-<!--            </vc-geometry-instance>-->
-<!--          </vc-primitive>-->
-
-
+          <vc-primitive :appearance="appearance">
+            <vc-geometry-instance :attributes="attributes" :modelMatrix="modelMatrix" v-for="(fr,index) in 32"
+                                  :key="fr">
+              <vc-geometry-box :dimensions="{x: 50.0, y: 50.0, z: 5.0 * (index+1)}"></vc-geometry-box>
+            </vc-geometry-instance>
+          </vc-primitive>
+          <vc-post-process-stage-scan ref="circle" type="circle" :options="{
+              position: [119.842282, 40.014781],
+              radius: 300,
+               interval: 1500,
+              color: [203, 92, 131, 255]
+          }"></vc-post-process-stage-scan>
           <!--高德图层-->
           <vc-layer-imagery>
             <!--高德地图-->
