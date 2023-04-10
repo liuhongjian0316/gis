@@ -8,11 +8,15 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     Index: typeof import('./src/components/Index.vue')['default']
     ModelBuilding: typeof import('./src/components/modelBuilding/ModelBuilding.vue')['default']
     ModelBuildingRow: typeof import('./src/components/modelBuildingRow/ModelBuildingRow.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TopBar: typeof import('./src/components/topBar/TopBar.vue')['default']
+    WebglIndexOne: typeof import('./src/components/webgl/WebglIndexOne.vue')['default']
+    WebglIndexThree: typeof import('./src/components/webgl/WebglIndexThree.vue')['default']
+    WebglIndexTwo: typeof import('./src/components/webgl/WebglIndexTwo.vue')['default']
   }
 }

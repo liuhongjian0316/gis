@@ -15,6 +15,21 @@ const routes = [
             requireAuth: true,
         },
     },
+    {
+        path: "/home2",
+        component: () => import("@views/Home/Home2.vue"),
+        meta: {
+            requireAuth: true,
+        },
+    },
+
+    {
+        path: "/webgl",
+        component: () => import("@views/WebGL/WebGL.vue"),
+        meta: {
+            requireAuth: true,
+        },
+    },
 ];
 
 
